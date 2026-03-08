@@ -4,7 +4,7 @@ from datetime import datetime
 
 # ---------------- CONFIGURATION ----------------
 # Yaad rakhna: URL ke aakhir mein /predict_spam zaroor lagana
-API_URL = "https://sms-spam-detection-1-qsi2.onrender.com/predict_spam"
+API_URL = "https://spam-detection-model-lcsy.onrender.com/predict_spam"
 MAX_MESSAGE_LENGTH = 1000
 
 # ---------------- CUSTOM CSS (Text Visibility Fix) ----------------
@@ -125,4 +125,5 @@ def main():
     st.markdown(f"<div class='footer'>Built by Anmol | BCA ML Portfolio Project | {datetime.now().year}</div>", unsafe_allow_html=True)
 
 if __name__ == "__main__":
+
     main()
