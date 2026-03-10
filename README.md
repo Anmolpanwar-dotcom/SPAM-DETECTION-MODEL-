@@ -43,6 +43,6 @@ Anmol
 
 Aspiring AI/ML Engineer | BCA Graduate
 
-LinkedIn: Anmol Panwar
+LinkedIn: https://www.linkedin.com/in/anmol-panwar-4b7779324/
 
-Portfolio: Anmol ML Chronicle
+
