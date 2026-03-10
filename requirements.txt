@@ -1,10 +1,9 @@
-flask
-pandas
-numpy
-scikit-learn
-gunicorn
-streamlit
+streamlit>=1.35.0
 requests
+pandas
+scikit-learn
+flask
 flask-cors
-
+gunicorn
+numpy
 
