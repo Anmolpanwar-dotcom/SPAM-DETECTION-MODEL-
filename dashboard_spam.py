@@ -2,6 +2,7 @@ import streamlit as st
 import requests
 from datetime import datetime
 
+# Render Backend URL
 API_URL = "https://spam-detection-model-lcsy.onrender.com/predict_spam"
 MAX_MESSAGE_LENGTH = 1000
 
@@ -28,7 +29,6 @@ CUSTOM_CSS = """
         margin-bottom: 2rem;
     }
     
-    /* FIX: Isse input text white aur saaf dikhega */
     .stTextArea textarea {
         color: #ffffff !important;
         background-color: #1e293b !important;
@@ -71,6 +71,10 @@ def main():
     st.markdown("<h1 class='main-title'>🛡️ AI Spam Detector</h1>", unsafe_allow_html=True)
     st.markdown("<p class='subtitle'>NLP Powered Message Classification System</p>", unsafe_allow_html=True)
 
+    # Clear Logic: Session state check
+    if 'message_input' not in st.session_state:
+        st.session_state.message_input = ""
+
     # Input Section
     st.subheader("📩 Enter Message")
     message = st.text_area(
@@ -84,7 +88,9 @@ def main():
     with col1:
         analyze_btn = st.button("🔍 Analyze Message", use_container_width=True, type="primary")
     with col2:
+        # Clear Button Fix: Directly reset session state
         if st.button("🗑️ Clear", use_container_width=True):
+            st.session_state.message_input = ""
             st.rerun()
 
     if analyze_btn:
@@ -93,36 +99,40 @@ def main():
         elif len(message) > MAX_MESSAGE_LENGTH:
             st.error(f"⚠️ Message too long (Max {MAX_MESSAGE_LENGTH} chars).")
         else:
-            with st.spinner("🧠 AI is analyzing..."):
+            # Spinner with increased timeout for Render cold start
+            with st.spinner("🧠 AI is analyzing... (Waking up Render server, please wait 30-40s)"):
                 try:
-                    # API Call
-                    response = requests.post(API_URL, json={"message": message}, timeout=15)
-                    data = response.json()
-
-                    if data.get("status") == "Success":
-                        result = data.get("result")
-                        
-                        st.markdown("### 📊 Prediction Result")
-                        if result == "Spam":
-                            st.markdown(f"<div class='result-card spam-card'><h2>🚨 Likely SPAM</h2><p>This message matches fraudulent patterns.</p></div>", unsafe_allow_html=True)
+                    # API Call with 60s timeout
+                    response = requests.post(API_URL, json={"message": message}, timeout=60)
+                    
+                    if response.status_code == 200:
+                        data = response.json()
+                        if data.get("status") == "Success":
+                            result = data.get("result")
+                            
+                            st.markdown("### 📊 Prediction Result")
+                            if result == "Spam":
+                                st.markdown(f"<div class='result-card spam-card'><h2>🚨 Likely SPAM</h2><p>This message matches fraudulent patterns.</p></div>", unsafe_allow_html=True)
+                            else:
+                                st.markdown(f"<div class='result-card ham-card'><h2>✅ Appears SAFE</h2><p>No spam patterns detected.</p></div>", unsafe_allow_html=True)
+                                st.balloons()
                         else:
-                            st.markdown(f"<div class='result-card ham-card'><h2>✅ Appears SAFE</h2><p>No spam patterns detected.</p></div>", unsafe_allow_html=True)
-                            st.balloons()
+                            st.error("❌ API returned an error.")
                     else:
-                        st.error("❌ API returned an error.")
+                        st.error(f"❌ Server Error: {response.status_code}. Try again in a few seconds.")
+                except requests.exceptions.Timeout:
+                    st.error("🔌 Timeout: Server is taking too long to wake up. Please try again now.")
                 except Exception as e:
-                    st.error("🔌 Connection Error: Render server is waking up or URL is wrong. Please wait 30 seconds.")
+                    st.error("🔌 Connection Error: Check if backend is live or try refreshing.")
 
     # Technical Details
     with st.expander("🔍 Technical Breakdown"):
         st.write("- **Model:** Multinomial Naive Bayes")
-        st.write("- **Tech:** TF-IDF Vectorizer + Flask + Render")
+        st.write("- **Tech:** TF-IDF Vectorization + Flask + Render")
         st.write("- **Dataset:** Kaggle SMS Spam Collection")
 
     # Footer
     st.markdown(f"<div class='footer'>Built by Anmol | BCA ML Portfolio Project | {datetime.now().year}</div>", unsafe_allow_html=True)
 
 if __name__ == "__main__":
-
     main()
-
