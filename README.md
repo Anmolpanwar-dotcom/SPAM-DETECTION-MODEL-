@@ -4,7 +4,7 @@ An intelligent message classification system built using Natural Language Proces
 🚀 Live Links
 Frontend (Streamlit): https://yz77ebsnrzs7kbcutqbfhh.streamlit.app/
 
-
+Available at your primary URL https://spam-detection-model-lcsy.onrender.com
 
 🛠️ Tech Stack & Workflow
 1. Model Development
