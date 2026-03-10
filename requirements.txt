@@ -7,4 +7,5 @@ streamlit
 requests
 flask-cors
 pickle 
-jsonify
+
+
