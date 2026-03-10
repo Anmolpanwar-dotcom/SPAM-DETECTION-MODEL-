@@ -6,6 +6,5 @@ gunicorn
 streamlit
 requests
 flask-cors
-pickle 
 
 
