@@ -2,8 +2,6 @@ import streamlit as st
 import requests
 from datetime import datetime
 
-# ---------------- CONFIGURATION ----------------
-# Yaad rakhna: URL ke aakhir mein /predict_spam zaroor lagana
 API_URL = "https://spam-detection-model-lcsy.onrender.com/predict_spam"
 MAX_MESSAGE_LENGTH = 1000
 
@@ -127,3 +125,4 @@ def main():
 if __name__ == "__main__":
 
     main()
+
