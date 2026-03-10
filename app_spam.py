@@ -1,12 +1,14 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import pickle
+import os
 
 app = Flask(__name__)
-CORS(app)  # Isse Streamlit se connection mein error nahi aayega
+CORS(app)  # Streamlit connection fix
 
 # Files Load Karo
 try:
+    # Root directory se files load ho rahi hain
     model = pickle.load(open('spam_model.pkl', 'rb'))
     tfidf = pickle.load(open('tfidf_vectorizer.pkl', 'rb'))
     print("✅ Model & Vectorizer Loaded Successfully!")
@@ -15,7 +17,7 @@ except Exception as e:
 
 @app.route('/', methods=['GET'])
 def home():
-    return "API is Live! Send POST request to /predict_spam"
+    return "✅ Spam Detection API is Live! Use /predict_spam for predictions."
 
 @app.route('/predict_spam', methods=['POST'])
 def predict():
@@ -30,6 +32,7 @@ def predict():
         vector_input = tfidf.transform([message])
         prediction = model.predict(vector_input)[0]
         
+        # Result mapping (1 for Spam, 0 for Ham)
         result = "Spam" if int(prediction) == 1 else "Ham"
         
         return jsonify({
@@ -40,4 +43,6 @@ def predict():
         return jsonify({'error': str(e), 'status': 'Failed'}), 500
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000)
+    # Render port binding fix
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host='0.0.0.0', port=port)
